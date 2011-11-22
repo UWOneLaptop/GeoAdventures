@@ -8,10 +8,16 @@ class next_question:
 		r = random.seed(gmtime() * 69) # random on current time multiplied by best number 
 	
 	#pseudo
-	def nextQuestion(self, country):
-		table = connection.cursor()
-		symbol = (country,)
-		table.execute('select * from TABLE where COUNTRY = ?', symbol)
+	def nextQuestion(self, country, profession):
+		countries = connection.cursor()
+		question = connection.cursor()	
+
+
+		symbol1 = (country,)
+		symbol2 = (profession,)
+		table.execute('select * from questions where cid = (select cid from countries where name = ?) AND qid in (select qid from questions_tags where tid in (select tid from proftags where pid = (select pid from profession where name = ?)))',symbol1,symbol2)
+		
+		#need to fix
 		possible_question = {}
 		for row in table:
 			if row[0] not in old_questions:
