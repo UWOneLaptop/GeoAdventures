@@ -38,4 +38,4 @@ def is_correct(entry, answer):
 		return "Wrong! Correct answer was %s." % answer
 
 def checkAnswer(question, answer):
-	return spellFudge(answer, question.answer)
+	return spellfudge(answer, question.answer)
