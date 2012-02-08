@@ -1,5 +1,6 @@
 import sqlite3 as lite
 import sys,csv
+import operator
 
 con = None
 
@@ -36,12 +37,40 @@ class database:
         for row in cur:
             print row[0]
 
+    def create_question(self):
+        con = self.con
+        cur = con.cursor()    
+        cur.execute('SELECT * FROM country ORDER BY RANDOM() LIMIT 5;')
+
+        countries = {}
+        for row in cur:
+            try:
+                countries[row[0]] = float(row[1])
+            except ValueError:
+                countries[row[0]] = 0
+
+        question = ''
+
+        question += 'Between '
+
+        for country in countries:
+            question += country + ', '
+
+        question += 'which is the largest one?'
+
+        print question
+
+        print max(countries.iteritems(), key=operator.itemgetter(1))[0]
+        
+
     def close_connection(self):
         if con:
             con.close()
 
-
 db = database('countries.db')
 # db.fill_database('countryfactsv2.csv')
-db.display_tables()
+# db.display_tables()
+db.create_question()
+
+
 db.close_connection()
