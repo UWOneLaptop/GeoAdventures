@@ -36,3 +36,6 @@ def is_correct(entry, answer):
 		return "You're very very close! Correct answer was %s, but we'll give it to you anyways." % answer
 	else:
 		return "Wrong! Correct answer was %s." % answer
+
+def checkAnswer(question, answer):
+	return spellfudge(answer, question.answer)
