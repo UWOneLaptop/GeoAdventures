@@ -1,3 +1,8 @@
+# Question Generator
+# Reads the countries.db database to generate basic random questions.
+
+# Author: Thibaut Labarre for OLPC UW club http://students.washington.edu/olpc/
+
 import sqlite3 as lite
 import sys,csv
 import operator
@@ -37,7 +42,7 @@ class database:
         for row in cur:
             print row[0]
 
-    def create_question(self):
+    def create_country_size_question(self):
         con = self.con
         cur = con.cursor()    
         cur.execute('SELECT * FROM country ORDER BY RANDOM() LIMIT 5;')
@@ -51,17 +56,20 @@ class database:
 
         question = ''
 
-        question += 'Between '
+        question += 'Between\n'
 
         for country in countries:
-            question += country + ', '
+            question += ' - ' + country + '\n'
 
-        question += 'which is the largest one?'
+        question += 'which is the largest one?\n'
 
-        print question
+        answer = raw_input(question)
+        biggestCountry = max(countries.iteritems(), key=operator.itemgetter(1))[0]
 
-        print max(countries.iteritems(), key=operator.itemgetter(1))[0]
-        
+        if answer == biggestCountry:
+            print 'Well done! It was ' + biggestCountry
+        else:
+            print 'Wrong... The right answer is ' + biggestCountry
 
     def close_connection(self):
         if con:
@@ -70,7 +78,7 @@ class database:
 db = database('countries.db')
 # db.fill_database('countryfactsv2.csv')
 # db.display_tables()
-db.create_question()
+db.create_country_size_question()
 
 
 db.close_connection()
