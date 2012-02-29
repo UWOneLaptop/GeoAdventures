@@ -9,6 +9,23 @@ import operator
 
 con = None
 
+class Question:
+    def __init__(self, idNum, text, answer, hints, rewards):
+        self.idNum = idNum
+        self.text = text
+        self.answer = answer
+        self.hints = hints
+        self.rewards = rewards
+
+    def console_print(self):
+        answer = raw_input(self.text)
+
+        if answer == self.answer:
+            print 'Well done! It was ' + self.answer
+        else:
+            print 'Wrong... The right answer is ' + self.answer
+        
+
 class database:
     def __init__(self,database):
         self.con = lite.connect(database)
@@ -42,6 +59,7 @@ class database:
         for row in cur:
             print row[0]
 
+    # Which is the biggest country between...
     def create_country_size_question(self):
         con = self.con
         cur = con.cursor()    
@@ -71,6 +89,35 @@ class database:
         else:
             print 'Wrong... The right answer is ' + biggestCountry
 
+
+
+    # Which is the biggest country between...
+    def create_country_size_question(self):
+        con = self.con
+        cur = con.cursor()    
+        cur.execute('SELECT * FROM country ORDER BY RANDOM() LIMIT 5;')
+
+        countries = {}
+        for row in cur:
+            try:
+                countries[row[0]] = float(row[1])
+            except ValueError:
+                countries[row[0]] = 0
+
+        question = ''
+
+        question += 'Between\n'
+
+        for country in countries:
+            question += ' - ' + country + '\n'
+
+        question += 'which is the largest one?\n'
+
+        biggestCountry = max(countries.iteritems(), key=operator.itemgetter(1))[0]
+
+        return Question(0,question,biggestCountry,'','')
+
+
     def close_connection(self):
         if con:
             con.close()
@@ -78,7 +125,8 @@ class database:
 db = database('countries.db')
 # db.fill_database('countryfactsv2.csv')
 # db.display_tables()
-db.create_country_size_question()
+question = db.create_country_size_question()
 
+question.console_print()
 
 db.close_connection()
