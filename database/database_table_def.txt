@@ -1,0 +1,15 @@
+I decree for now an all time (until one you sees fit to add new functionality, or I decree that the definition sucks) that the database wll be defined with the following tables:
+
+table name: languages
+column: language  (english)
+column: language_id  (1)
+
+table name: countries
+column: country  (Uraguay)
+column: country_id  (1)
+
+table name: facts
+column: language_id  (1)
+column: country_id  (1)
+column: fact_type  (people)
+column: fact_text  (Carmen)
