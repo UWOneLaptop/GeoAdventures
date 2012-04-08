@@ -34,3 +34,18 @@ class Model:
 class CountryInstance:
 	''' Contains state info for a country relating to the current game.
 	Keeps track of buildings, questions at buildingo, fact sheets, etc.'''
+	
+	def __init__(self,name,tags,facts,questions):
+		for i in range (len(tags)) :
+			makeBuildings(tags[i], questions[i])
+		return None
+		
+	'''def makeBuildings(tag):
+		new BuildingInstance'''
+
+class BuildingInstance:
+	'''Contains info for a building.  This will be intiallized when the buildings database and questions databases get queried.  An array of buildings will be held in a CountryInstance.
+	The type is the style of building i.e. cathedral, library etc.  Type is also expected to hold the character in the builidng.  The Question holds the question-answer pair.'''
+	
+	def __init__(self, type, Question):
+		return None
