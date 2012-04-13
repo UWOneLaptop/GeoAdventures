@@ -20,6 +20,13 @@ class Model:
 	def new_game(start_country):
 		'''generates a new game with 15 new countries including the start
 		country.'''
+		# list of info tuples for a country (i.e. name, tags, etc)
+		country_list = get_countries(start_country)
+		for x in country_list:
+			name,tags = x
+			facts, questions = question_query(x)
+			building_query(tags)
+			CountryInstance(name,tags,facts,questions)
 		return None  # skeleton code
 
 
