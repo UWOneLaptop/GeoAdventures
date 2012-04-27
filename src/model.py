@@ -7,6 +7,8 @@ class Model:
 	state info as well as changes game state.  Its fields should keep track of
 	the game state '''
 
+	COUNTRY_LIMIT = 15
+
 	def __init__(self, player_info_hash):
 		'''
 		Setup connections to the database and init game state variables
@@ -33,10 +35,13 @@ class Model:
 		start_country = player_info_hash["country"]
 		country_list = list()
 		# list of info tuples for a country (i.e. name, tags, etc)
-		country_info_list = c_query.generate_countries(start_country)
-		for c in country_info_list:
-			name,tags = c
-			questions = q_query.questions(tags)
+		c_info_list = c_query.generate_countries(start_country, COUNTRY_LIMIT)
+		for info_hash in c_info_list:
+			name = info_hash["name"]
+			tags = info_hash["tags"]
+
+			
+			questions = q_query.generate_questions(tags)
 
 			# make some buildings
 
@@ -71,7 +76,11 @@ class GameState:
 		'''
 		Enter the specified country in this game.
 		'''
-		return None  # skeleton code
+		choice = filter(lambda c: c.name == country_name, country_list)
+		if len(choice) == 0:
+			Exception("specified country "+country_name+" not a valid choice")
+		choice = choice[0]
+		self.curr_country = choice
 
 
 class CountryInstance:
