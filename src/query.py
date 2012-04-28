@@ -8,7 +8,7 @@ class QuestionQuery:
     """
     def __init__(self,database_path):
         """constructor, accepts a path to the database to open"""
-        self.database = database_path
+        self.database_path = database_path
     
     def generate_questions(self,tags):
 		'''
@@ -16,14 +16,19 @@ class QuestionQuery:
 		The tags specify the subject of the question and includes the country name
 		that the question will be about.
 		'''
+		from question import Question
         import sqlite3 as sqlite
-        con = sqlite.connect(self.database);
-        cur = con.cursor();
+        db = sqlite.connect(self.database_path);
+        cur = db.cursor();
 
 		q_list = list()
+		cur.execute(get_question_by_tag())
+		for row in cur.fetchall():
+			???? = row.split(",")
+			q_list.append(Question(text, answer, choices, q_id))
 
-		# query the DB cursor, filtering on tags
-        return None;#skeleton
+		self.db = sqlite3.close()
+		return q_list
 
 
 class CountryQuery:
@@ -31,6 +36,7 @@ class CountryQuery:
     def __init__(self,database_path):
         """constructor, accepts a path to the database to open"""
         self.database_path = database_path
+
 
 	def generate_countries(self, start_country, number):
 		'''
@@ -45,5 +51,37 @@ class CountryQuery:
 			"name" - the name of the country
 			"tags" - a tuple of tags for this country (including the country name)
 		''' 
-		return None
+        import sqlite3 as sqlite
+		self.db = sqlite3.connect(database_path)
+		c = self.db.cursor()
+
+		id_set = set()
+		chosen_set = set()
+
+		c.execute( query_countries() )
+		for row in c.fetchall():
+			c_id, name = row.split(",")
+			if name == start_country:
+				chosen_set.add(c_id)
+			id_set.add(c_id)
+
+		from random import choice
+		while len(chosen_set) < number:
+			chosen_set.add( random.choice(id_set) )
+
+
+		info_hash_list = list()
+		for c_id in chosen_set:
+			c.execute( get_tags(c_id) )
+			info_dict = dict()
+			for row in c.fetchall():
+				??? = row.split(",")
+				# put info into the dict
+				info_dict["name"] = name
+				info_dict["tags"] = tags 
+
+			info_hash_list.append(info_dict)
+				
+		self.db = sqlite3.close()
+		return info_hash_list
 		
