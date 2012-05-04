@@ -96,6 +96,13 @@ class GameState:
 		self.curr_country = choice[0]
 
 
+	def get_country_names(self):
+		'''
+		Returns a list of country name visitable in this game
+		'''
+		return map(lambda c: c.name, self.country_list)
+
+
 class CountryInstance:
 	''' Contains state info for a country relating to the current game.
 	Keeps track of buildings, questions at building, fact sheets, etc.'''
