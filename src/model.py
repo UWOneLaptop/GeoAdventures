@@ -8,6 +8,8 @@ class Model:
 	the game state '''
 
 	COUNTRY_LIMIT = 15
+	LOCATIONS_PER_COUNTRY = 3
+	BUILDING_TYPES = ["library","townhall","museum"]
 
 	def __init__(self, player_info_hash):
 		'''
@@ -20,7 +22,7 @@ class Model:
 			"gender" - player gender
 			"country" - starting country for the game
 		'''
-		database_path = "something"
+		database_path = "../database/QandA.db"
 		self.c_query = CountryQuery(database_path)
 		self.q_query = QuestionQuery(database_path)
 		self.player_info_hash = player_info_hash
@@ -33,22 +35,32 @@ class Model:
 		current player.
 		'''
 		start_country = player_info_hash["country"]
+
+		used_q_ids = set()
 		country_list = list()
-		# list of info tuples for a country (i.e. name, tags, etc)
+		# list of info hashes, a hash for each country
 		c_info_list = c_query.generate_countries(start_country, COUNTRY_LIMIT)
 		for info_hash in c_info_list:
 			name = info_hash["name"]
 			tags = info_hash["tags"]
 
+			# make some buildings
+			buildings = BUILDING_TYPES[0:LOCATIONS_PER_COUNTRY]
 			
 			questions = q_query.generate_questions(tags)
+			choices = filter(lambda q: q.q_id not in used_q_ids, questions)
+			if len(choices) < LOCATIONS_PER_COUNTRY:
+				Exception("specified tags "+str(tags)+" don't have enough associated questions")
+				
+			choices = choices[0:LOCATIONS_PER_COUNTRY]
 
-			# make some buildings
-
-			country_list.append( CountryInstance(name,tags,facts,questions) )
+			country = CountryInstance(name,facts)
+			country.set_build_a(buildings[0], choices[0])
+			country.set_build_b(buildings[1], choices[1])
+			country.set_build_c(buildings[2], choices[2])
+			country_list.append( country )
 
 		return GameState(country_list, start_country)
-
 
 
 
@@ -65,7 +77,7 @@ class GameState:
 		'''		
 		Accepts a list of CountryInstance objects.
 		'''
-		self.score = 0
+		self.pieces = 0
 		self.country_list = country_list
 		self.curr_country = start_country
 
@@ -79,20 +91,38 @@ class GameState:
 		choice = filter(lambda c: c.name == country_name, country_list)
 		if len(choice) == 0:
 			Exception("specified country "+country_name+" not a valid choice")
-		choice = choice[0]
-		self.curr_country = choice
+		elif len(choice) > 1:
+			Exception("specified country "+country_name+" found multiple times")
+		self.curr_country = choice[0]
 
 
 class CountryInstance:
 	''' Contains state info for a country relating to the current game.
 	Keeps track of buildings, questions at building, fact sheets, etc.'''
 	
-	def __init__(self, name, tags, facts, questions):
-		self.facts = facts
+	def __init__(self, name, facts):
 		self.name = name
-		self.buildings = list()
-		for i in range (len(tags)) :
-			builings[i] = (tags[i], questions[i])
-		
-		return None
+		self.facts = facts
+		self.build_a = None
+		self.quest_a = None
+		self.build_b = None
+		self.quest_b = None
+		self.build_c = None
+		self.quest_c = None
+
+
+	def set_build_a(b_type, question):
+		self.build_a = b_type
+		self.quest_a = question
+		return self
+
+	def set_build_b(b_type, question):
+		self.build_b = b_type
+		self.quest_b = question
+		return self
+
+	def set_build_c(b_type, question):
+		self.build_c = b_type
+		self.quest_c = question
+		return self
 
