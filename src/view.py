@@ -4,6 +4,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 import pango
+from model import *
 
 class View:
 	def delete_event(self, widget, event, data=None):
@@ -206,11 +207,9 @@ class View:
 	def ok_callback(self, widget):
 		self.name = self.name_entry.get_text()
 		if self.name != '' and self.child !='' and self.country !='--':
-			# TODO: pass parameters to controller
+			model = Model({'name': self.name, 'gender': self.child, 'country': self.country})
+			self.game_state = model.new_game()
 			# TODO: play intro
-			print self.name
-			print self.child
-			print self.country
 			self.show_choose_next_country()
 	
 	def changed_country_callback(self, combobox):
@@ -291,13 +290,6 @@ class View:
 		self.window.set_decorated(False)
 		self.window.connect('delete_event', self.delete_event)
 		self.window.connect('destroy', self.destroy)
-		#self.show_city('big')
-		#self.show_city('small')
-		#self.show_choose_next_country()
-		#answers = ['USA', 'France', 'Spain', 'China', 'Hongkong']
-		#self.show_location('townhall', 'carmen', 'What\'s the biggest country?', answers, 'China')
-		#self.show_location('college', 'carlos', 'What\'s the biggest country?', answers, 'China')
-		#self.show_location('church', 'carmen', 'What\'s the biggest country?', answers, 'China')
 		self.show_new_game_menu()
 		self.window.show_all()
 		self.window.resize(1200, 800)
