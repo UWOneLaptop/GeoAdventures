@@ -7,10 +7,6 @@ class Model:
 	state info as well as changes game state.  Its fields should keep track of
 	the game state '''
 
-	COUNTRY_LIMIT = 15
-	LOCATIONS_PER_COUNTRY = 3
-	BUILDING_TYPES = ["library","townhall","museum"]
-
 	def __init__(self, player_info_hash):
 		'''
 		Setup connections to the database and init game state variables
@@ -22,6 +18,9 @@ class Model:
 			"gender" - player gender
 			"country" - starting country for the game
 		'''
+		self.COUNTRY_LIMIT = 15
+		self.LOCATIONS_PER_COUNTRY = 3
+		self.BUILDING_TYPES = ["library","townhall","museum"]
 		database_path = "../database/QandA.db"
 		self.c_query = CountryQuery(database_path)
 		self.q_query = QuestionQuery(database_path)
@@ -34,25 +33,25 @@ class Model:
 		A new game has 15 countries including the start	country of the
 		current player.
 		'''
-		start_country = player_info_hash["country"]
+		start_country = self.player_info_hash["country"]
 
 		used_q_ids = set()
 		country_list = list()
 		# list of info hashes, a hash for each country
-		c_info_list = c_query.generate_countries(start_country, COUNTRY_LIMIT)
+		c_info_list = self.c_query.generate_countries(start_country, self.COUNTRY_LIMIT)
 		for info_hash in c_info_list:
 			name = info_hash["name"]
 			tags = info_hash["tags"]
 
 			# make some buildings
-			buildings = BUILDING_TYPES[0:LOCATIONS_PER_COUNTRY]
+			buildings = self.BUILDING_TYPES[0:self.LOCATIONS_PER_COUNTRY]
 			
 			questions = q_query.generate_questions(tags)
 			choices = filter(lambda q: q.q_id not in used_q_ids, questions)
-			if len(choices) < LOCATIONS_PER_COUNTRY:
+			if len(choices) < self.LOCATIONS_PER_COUNTRY:
 				Exception("specified tags "+str(tags)+" don't have enough associated questions")
 				
-			choices = choices[0:LOCATIONS_PER_COUNTRY]
+			choices = choices[0:self.LOCATIONS_PER_COUNTRY]
 
 			country = CountryInstance(name,facts)
 			country.set_build_a(buildings[0], choices[0])
