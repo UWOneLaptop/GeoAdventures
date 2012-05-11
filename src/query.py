@@ -29,7 +29,9 @@ class QuestionQuery:
 		else:
 			cur.execute(get_question_by_tags(tags))
 
+		print "Query Questions"
 		for row in cur.fetchall():
+			print str(row)
 			#???? = row.split(",")
 			#extract values
 			text = None
@@ -39,7 +41,7 @@ class QuestionQuery:
 
 			q_list.append(Question(text, answer, choices, q_id))
 
-		self.db = sqlite.close()
+		db.close()
 		return q_list
 
 
@@ -64,14 +66,16 @@ class CountryQuery:
 			"tags" - a tuple of tags for this country (including the country name)
 		''' 
 		import sqlite3 as sqlite
-		self.db = sqlite.connect(self.database_path)
-		c = self.db.cursor()
+		db = sqlite.connect(self.database_path)
+		c = db.cursor()
 
 		id_set = set()
 		chosen_set = set()
 
+		print "Query Countries"
 		c.execute( query_countries() )
 		for row in c.fetchall():
+			print str(row)
 			c_id, name = row.split(",")
 			if name == start_country:
 				chosen_set.add(c_id)
@@ -85,11 +89,13 @@ class CountryQuery:
 			chosen_set = id_set
 
 
+		print "Query Country Info"
 		info_hash_list = list()
 		for c_id in chosen_set:
 			c.execute( get_tags(c_id) )
 			info_dict = dict()
 			for row in c.fetchall():
+				print str(row)
 				#??? = row.split(",")
 				#extract the info for this country
 				name = None
@@ -100,6 +106,6 @@ class CountryQuery:
 
 			info_hash_list.append(info_dict)
 				
-		self.db = sqlite.close()
+		db.close()
 		return info_hash_list
 
