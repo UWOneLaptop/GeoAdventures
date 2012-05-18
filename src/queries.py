@@ -18,6 +18,10 @@ def get_tags(country_id):
     """
     return "SELECT tag FROM Country_Tags WHERE c_id = "+str(country_id)+";"
 
+def get_answers_by_q_id(q_id):
+    return "SELECT DISTINCT a.a_text, a.valid FROM Answers a \
+    WHERE a.q_id = " + str(q_id) + " ;"
+    
 def get_question_by_tag(tag):
     """
     Returns a SQL query that selects all the questions associated with a specific
@@ -25,7 +29,7 @@ def get_question_by_tag(tag):
 
     accepts string tag
     """
-    return "SELECT * FROM Questions q, Question_Tags qt \
+    return "SELECT q.q_id, q.q_text FROM Questions q, Question_Tags qt \
             WHERE q.q_id = qt.q_id \
             AND qt.tag = '" + tag + "';"
 
@@ -39,8 +43,10 @@ def get_question_by_tags(tags):
         query_top += ", Question_Tags " + tag_instance + " "
         query_bottom += ("q.q_id  = " + tag_instance + ".q_id " +
         "AND " + tag_instance + ".tag = '" + tag +"' AND ")
+
         i+=1
-    query_top += query_bottom[0:-5];
-    return query_top;
+    query_top += query_bottom[0:-5]
+    print(query_top)
+    return query_top
                  
              

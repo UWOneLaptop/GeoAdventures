@@ -13,6 +13,9 @@ class Question:
 		is otherwise close enough.'''
 		return is_correct(attempt, self.answer)
 	
+	def __str__(self):
+		return self.text + " " + self.answer + " " + str(self.choices) + " " + str(self.q_id)
+
 def substCost(x, y):
 	if x == y:
 		return 0

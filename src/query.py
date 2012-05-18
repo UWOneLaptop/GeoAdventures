@@ -28,19 +28,23 @@ class QuestionQuery:
 			cur.execute(get_question_by_tag(tags[0]))
 		else:
 			cur.execute(get_question_by_tags(tags))
-
-		print "Query Questions"
-		for row in cur.fetchall():
-			print str(row)
-			#???? = row.split(",")
-			#extract values
-			text = None
-			answer = None
-			choices = None
-			q_id = None
-
-			q_list.append(Question(text, answer, choices, q_id))
-
+        
+		print( "Query Questions")
+		output = cur.fetchall()
+		for row in output:
+			print (str(row))
+			q_id, text= row
+			cur.execute(get_answers_by_q_id(q_id))
+			choices = []
+			valid_answer = None
+			for answer in cur.fetchall():
+				ans,valid = answer
+				choices.append(ans)
+				if (valid == 1):
+					valid_answer = ans
+		q_list.append(Question(text, valid_answer, choices, q_id))
+		for q in q_list:
+			print(str(q))	
 		db.close()
 		return q_list
 
@@ -72,10 +76,10 @@ class CountryQuery:
 		id_list = list()
 		chosen_list = list()
 
-		print "Query Countries"
+		print ("Query Countries")
 		c.execute( query_countries() )
 		for row in c.fetchall():
-			print str(row)
+			print (str(row))
 			c_id, name = row
 			pair = (c_id, str(name),)
 
@@ -93,7 +97,7 @@ class CountryQuery:
 			chosen_list = id_list
 
 
-		print "Query Country Info"
+		print ("Query Country Info")
 		info_hash_list = list()
 		for c_id, name in chosen_list:
 			c.execute( get_tags(c_id) )
