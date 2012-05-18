@@ -69,37 +69,41 @@ class CountryQuery:
 		db = sqlite.connect(self.database_path)
 		c = db.cursor()
 
-		id_set = set()
-		chosen_set = set()
+		id_list = list()
+		chosen_list = list()
 
 		print "Query Countries"
 		c.execute( query_countries() )
 		for row in c.fetchall():
 			print str(row)
-			c_id, name = row.split(",")
+			c_id, name = row
+			pair = (c_id, str(name),)
+
+			# Make sure we add the intended start country
 			if name == start_country:
-				chosen_set.add(c_id)
-			id_set.add(c_id)
+				chosen_list.append(pair)
+			id_list.append(pair)
 
 		from random import choice
-		if len(id_set) > number:
-			while len(chosen_set) < number:
-				chosen_set.add( random.choice(id_set) )
+		if len(id_list) > number:
+			# Choose the rest of the countries randomly
+			while len(chosen_list) < number:
+				chosen_list.append( choice(id_list) )
 		else:
-			chosen_set = id_set
+			chosen_list = id_list
 
 
 		print "Query Country Info"
 		info_hash_list = list()
-		for c_id in chosen_set:
+		for c_id, name in chosen_list:
 			c.execute( get_tags(c_id) )
 			info_dict = dict()
+			#extract the info for this country
 			for row in c.fetchall():
-				print str(row)
-				#??? = row.split(",")
-				#extract the info for this country
-				name = None
-				tags = None
+				tags = list()
+				for r in list(row):
+					tags.append(str(r))
+				tags = tuple(tags)
 			# put info into the dict
 			info_dict["name"] = name
 			info_dict["tags"] = tags 
