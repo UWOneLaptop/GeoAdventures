@@ -16,7 +16,7 @@ def get_tags(country_id):
 
     accepts integer parameter corresponding to the country id
     """
-    return "SELECT tag FROM Country_Tags WHERE c_id = country_id;"
+    return "SELECT tag FROM Country_Tags WHERE c_id = "+str(country_id)+";"
 
 def get_question_by_tag(tag):
     """
